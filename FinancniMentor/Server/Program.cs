@@ -11,6 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddVydelkyRepository(); //metoda ze SampleData!!!
+builder.Services.AddVydajeRepository();
 
 var app = builder.Build();
 

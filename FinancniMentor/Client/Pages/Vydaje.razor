@@ -1,15 +1,15 @@
-﻿@page "/vydelky"
+﻿@page "/vydaje"
 @using System.Globalization
 @inject HttpClient Http;
 
 
-<h1>PŘÍJMY</h1>
+<h1>VÝDAJE</h1>
 
 <div class="row mb-3">
     <div class="col-lg-8">
-        <div id="vydelky-table" class="card">
+        <div id="vydaje-table" class="card">
             <div class="card-header">
-                <h5><strong>Přehled výdělků</strong></h5>                
+                <h5><strong>Přehled výdajů</strong></h5>                
             </div>
             <div class="card-body">
                 <table class="table table-striped">
@@ -23,20 +23,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (vydelky == null)
+                        @if (vydaje == null)
                         {
                             <tr><td><em>Loading...</em></td></tr>
                         }
                         else
                         {
-                            @foreach (var vydelek in vydelky)
+                            @foreach (var vydaj in vydaje)
                             {
                                 <tr>
-                                    <td>@vydelek.Datum.ToShortDateString()</td>
-                                    <td>@vydelek.Kategorie</td>
-                                    <td>@vydelek.Subjekt</td>
-                                    <td>@vydelek.Castka.ToString("C", CultureInfo.CreateSpecificCulture("cs-CZ"))</td>
-                                    <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(vydelek)">Smazat</button></td>
+                                    <td>@vydaj.Datum.ToShortDateString()</td>
+                                    <td>@vydaj.Kategorie</td>
+                                    <td>@vydaj.Subjekt</td>
+                                    <td>@vydaj.Castka.ToString("C", CultureInfo.CreateSpecificCulture("cs-CZ"))</td>
+                                    <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(vydaj)">Smazat</button></td>
                                 </tr>
                             }
                         }
@@ -46,7 +46,7 @@
         </div>
     </div>
     <div class="col-lg-4">
-        <VydelekForm OnSubmitCallback="@Refresh"></VydelekForm>
+        <VydajForm OnSubmitCallback="@Refresh"></VydajForm>
     </div>
 </div>
 <br />
@@ -65,28 +65,28 @@
 
 
 @code {
-    private Vydelek[] vydelky;
+    private Vydaj[] vydaje;
 
-    private Vydelek _vydelekToDelete;
+    private Vydaj _vydajToDelete;
     public bool DeleteDialogOpen { get; set; }
 
     private async Task OnDeleteDialogClose(bool accepted)
     {
         if (accepted)
         {
-            await Http.DeleteAsync($"api/Vydelky/{_vydelekToDelete.Id}");
+            await Http.DeleteAsync($"api/Vydaje/{_vydajToDelete.Id}");
             await LoadData();
-            _vydelekToDelete = null;
+            _vydajToDelete = null;
         }
 
         DeleteDialogOpen = false;
         StateHasChanged();
     }
 
-    private void OpenDeleteDialog(Vydelek vydelek)
+    private void OpenDeleteDialog(Vydaj vydaj)
     {
         DeleteDialogOpen = true;
-        _vydelekToDelete = vydelek;
+        _vydajToDelete = vydaj;
         StateHasChanged();
     }
 
@@ -97,7 +97,7 @@
 
     private async Task LoadData()
     {
-        vydelky = await Http.GetFromJsonAsync<Vydelek[]>("api/Vydelky");
+        vydaje = await Http.GetFromJsonAsync<Vydaj[]>("api/Vydaje");
         StateHasChanged();
     }
 

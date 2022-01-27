@@ -2,21 +2,21 @@
 
 <div class="card">
     <div class="card-header">
-        <h5><strong>Přidat výdělek</strong></h5>
+        <h5><strong>Přidat výdaj</strong></h5>
     </div>
     <div class="card-body">
-        <EditForm Model="@vydelek" OnValidSubmit="@HandleValidSubmit">
+        <EditForm Model="@vydaj" OnValidSubmit="@HandleValidSubmit">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
             <div class="form-group">
                 <label for="datumInput">Datum</label>
-                <InputDate class="form-control" id="datumInput" @bind-Value="vydelek.Datum" />
+                <InputDate class="form-control" id="datumInput" @bind-Value="vydaj.Datum" />
             </div>           
             <div class="form-group">
                 <label for="kategorieInput">Kategorie</label>
-                <InputSelect class="form-control" id="kategorieInput" @bind-Value="vydelek.Kategorie">
+                <InputSelect class="form-control" id="kategorieInput" @bind-Value="vydaj.Kategorie">
                     @{
-                        foreach (var value in Enum.GetValues(typeof(VydelekKategorie)))
+                        foreach (var value in Enum.GetValues(typeof(VydajKategorie)))
                         {
                             <option value="@value">@value</option>
                         }
@@ -25,11 +25,11 @@
             </div>
              <div class="form-group">
                 <label for="subjektInput">Subjekt</label>
-                <InputText class="form-control" id="subjektInput" @bind-Value="vydelek.Subjekt" />
+                <InputText class="form-control" id="subjektInput" @bind-Value="vydaj.Subjekt" />
             </div>
             <div class="form-group">
                 <label for="castkaInput">Částka</label>
-                <InputNumber class="form-control" id="castkaInput" @bind-Value="vydelek.Castka" />
+                <InputNumber class="form-control" id="castkaInput" @bind-Value="vydaj.Castka" />
             </div>
            
             <div class="pt-3">
@@ -40,14 +40,14 @@
 </div>
 @code {
 
-    private VydelekModel vydelek = new VydelekModel { Datum = DateTime.Today };
+    private VydajModel vydaj = new VydajModel { Datum = DateTime.Today };
 
     [Parameter]
     public EventCallback OnSubmitCallback { get; set; }
 
     public async Task HandleValidSubmit()
     {
-        await Http.PostAsJsonAsync<VydelekModel>("api/Vydelky", vydelek);
+        await Http.PostAsJsonAsync<VydajModel>("api/Vydaje", vydaj);
         await OnSubmitCallback.InvokeAsync();
     }
 }
