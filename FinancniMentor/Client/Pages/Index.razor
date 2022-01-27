@@ -13,12 +13,12 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header">
-                @currentYear - Příjmy a výdaje
+                <strong>@currentYear</strong> - Příjmy a výdaje
             </div>
             <div class="card-body">
                 <RadzenChart>
-                    <RadzenColumnSeries Fill="#AACDBE" Data="@yearlyEarnings" CategoryProperty="měsíc" ValueProperty="částka" Title="příjmy" LineType="LineType.Dashed" />
-                    <RadzenColumnSeries Fill="#EA907A" Data="@yearlyExpenses" CategoryProperty="měsíc" ValueProperty="částka" Title="výdaje" LineType="LineType.Dashed" />
+                    <RadzenColumnSeries Fill="#AACDBE" Data="@yearlyVydelky" CategoryProperty="Month" ValueProperty="Castka" Title="Příjmy" LineType="LineType.Dashed" />
+                    <RadzenColumnSeries Fill="#EA907A" Data="@yearlyVydaje" CategoryProperty="Month" ValueProperty="Castka" Title="Výdaje" LineType="LineType.Dashed" />
                     <RadzenColumnOptions Radius="5" />
                     <RadzenValueAxis Formatter="@FormatAsCZK">
                         <RadzenGridLines Visible="true" />
@@ -73,17 +73,17 @@
 @code {
     private static int currentYear = DateTime.Today.Year;
     private ICollection<string> colors = new List<string>() { "#FBC687", "#F4F7C5", "#93ABD3" };
-    private ICollection<YearlyItem> yearlyExpenses;
-    private ICollection<YearlyItem> yearlyEarnings;
+    private ICollection<YearlyItem> yearlyVydaje;
+    private ICollection<YearlyItem> yearlyVydelky;
     private ThreeMonthsData vydelky;
     private ThreeMonthsData vydaje;
 
     protected override async Task OnInitializedAsync()
     {
-        vydelky = await _dataService.LoadLast3MonthsEarnings();
-        vydaje = await _dataService.LoadLast3MonthsExpenses();
-        yearlyExpenses = await _dataService.LoadCurrentYearExpenses();
-        yearlyEarnings = await _dataService.LoadCurrentYearEarnings();
+        vydelky = await _dataService.LoadLast3MonthsVydelky();
+        vydaje = await _dataService.LoadLast3MonthsVydaje();
+        yearlyVydaje = await _dataService.LoadCurrentYearVydaje();
+        yearlyVydelky = await _dataService.LoadCurrentYearVydelky();
 
         StateHasChanged();
     }

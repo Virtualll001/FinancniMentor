@@ -3,6 +3,6 @@
     public class YearlyItem
     {
         public string Month { get; set; }
-        public decimal Amount { get; set; }
+        public decimal Castka { get; set; }
     }
 }

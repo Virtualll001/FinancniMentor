@@ -10,10 +10,10 @@ namespace FinancniMentor.Client.Services
 
         public DataService(HttpClient http)
         {
-            _httpClient = http;
+            _httpClient = http; 
         }
-
-        public async Task<ICollection<YearlyItem>> LoadCurrentYearEarnings()
+                
+        public async Task<ICollection<YearlyItem>> LoadCurrentYearVydelky()
         {
             var data = await _httpClient.GetFromJsonAsync<Vydelek[]>("api/Vydelky");
             return data.Where(vydelek => vydelek.Datum >= new DateTime(_currentYear, 1, 1)
@@ -23,12 +23,12 @@ namespace FinancniMentor.Client.Services
                 .Select(vydelek => new YearlyItem
                 {
                     Month = GetMonthAsText(vydelek.Key, _currentYear),
-                    Amount = vydelek.Sum(item => item.Castka)
+                    Castka = vydelek.Sum(item => item.Castka)
                 })
                 .ToList();
         }
 
-        public async Task<ICollection<YearlyItem>> LoadCurrentYearExpenses()
+        public async Task<ICollection<YearlyItem>> LoadCurrentYearVydaje()
         {
             var data = await _httpClient.GetFromJsonAsync<Vydaj[]>("api/Vydaje");
             return data.Where(vydaj => vydaj.Datum >= new DateTime(_currentYear, 1, 1)
@@ -38,12 +38,12 @@ namespace FinancniMentor.Client.Services
                 .Select(vydaj => new YearlyItem
                 {
                     Month = GetMonthAsText(vydaj.Key, _currentYear),
-                    Amount = vydaj.Sum(item => item.Castka)
+                    Castka = vydaj.Sum(item => item.Castka)
                 })
                 .ToList();
         }
 
-        public async Task<ThreeMonthsData> LoadLast3MonthsEarnings()
+        public async Task<ThreeMonthsData> LoadLast3MonthsVydelky()
         {
             var currentMonth = DateTime.Today.Month;
             var lastMonth = DateTime.Today.AddMonths(-1);
@@ -53,23 +53,23 @@ namespace FinancniMentor.Client.Services
             {
                 CurrentMonth = new MonthlyData
                 {
-                    Data = await GetMonthlyEarnings(currentMonth, _currentYear),
+                    Data = await GetMonthlyVydelky(currentMonth, _currentYear),
                     Label = GetMonthAsText(currentMonth, _currentYear)
                 },
                 LastMonth = new MonthlyData
                 {
-                    Data = await GetMonthlyEarnings(lastMonth.Month, lastMonth.Year),
+                    Data = await GetMonthlyVydelky(lastMonth.Month, lastMonth.Year),
                     Label = GetMonthAsText(lastMonth.Month, lastMonth.Year)
                 },
                 PreviousMonth = new MonthlyData
                 {
-                    Data = await GetMonthlyEarnings(previousMonth.Month, previousMonth.Year),
+                    Data = await GetMonthlyVydelky(previousMonth.Month, previousMonth.Year),
                     Label = GetMonthAsText(previousMonth.Month, previousMonth.Year)
                 }
             };
         }
 
-        private async Task<ICollection<MonthlyItem>> GetMonthlyEarnings(int month, int year)
+        private async Task<ICollection<MonthlyItem>> GetMonthlyVydelky(int month, int year)
         {
             var data = await _httpClient.GetFromJsonAsync<Vydelek[]>("api/Vydelky");
             return data.Where(vydelek => vydelek.Datum >= new DateTime(year, month, 1)
@@ -77,13 +77,13 @@ namespace FinancniMentor.Client.Services
                 .GroupBy(vydelek => vydelek.Kategorie)
                 .Select(vydelek => new MonthlyItem
                 {
-                    Amount = vydelek.Sum(item => item.Castka),
-                    Category = vydelek.Key.ToString()
+                    Castka = vydelek.Sum(item => item.Castka),
+                    Kategorie = vydelek.Key.ToString()
                 })
                 .ToList();
         }
 
-        public async Task<ThreeMonthsData> LoadLast3MonthsExpenses()
+        public async Task<ThreeMonthsData> LoadLast3MonthsVydaje()
         {
             var currentMonth = DateTime.Today.Month;
             var lastMonth = DateTime.Today.AddMonths(-1);
@@ -93,23 +93,23 @@ namespace FinancniMentor.Client.Services
             {
                 CurrentMonth = new MonthlyData
                 {
-                    Data = await GetMonthlyExpenses(currentMonth, _currentYear),
+                    Data = await GetMonthlyVydaje(currentMonth, _currentYear),
                     Label = GetMonthAsText(currentMonth, _currentYear)
                 },
                 LastMonth = new MonthlyData
                 {
-                    Data = await GetMonthlyExpenses(lastMonth.Month, lastMonth.Year),
+                    Data = await GetMonthlyVydaje(lastMonth.Month, lastMonth.Year),
                     Label = GetMonthAsText(lastMonth.Month, lastMonth.Year)
                 },
                 PreviousMonth = new MonthlyData
                 {
-                    Data = await GetMonthlyExpenses(previousMonth.Month, previousMonth.Year),
+                    Data = await GetMonthlyVydaje(previousMonth.Month, previousMonth.Year),
                     Label = GetMonthAsText(previousMonth.Month, previousMonth.Year)
                 }
             };
         }
 
-        private async Task<ICollection<MonthlyItem>> GetMonthlyExpenses(int month, int year)
+        private async Task<ICollection<MonthlyItem>> GetMonthlyVydaje(int month, int year)
         {
             var data = await _httpClient.GetFromJsonAsync<Vydaj[]>("api/Vydaje");
             return data.Where(vydaj => vydaj.Datum >= new DateTime(year, month, 1)
@@ -117,8 +117,8 @@ namespace FinancniMentor.Client.Services
                 .GroupBy(vydaj => vydaj.Kategorie)
                 .Select(vydaj => new MonthlyItem
                 {
-                    Amount = vydaj.Sum(item => item.Castka),
-                    Category = vydaj.Key.ToString()
+                    Castka = vydaj.Sum(item => item.Castka),
+                    Kategorie = vydaj.Key.ToString()
                 })
                 .ToList();
         }

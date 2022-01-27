@@ -2,10 +2,10 @@
 {
     public interface IDataService
     {
-        Task<ICollection<YearlyItem>> LoadCurrentYearExpenses();
-        Task<ICollection<YearlyItem>> LoadCurrentYearEarnings();
-        Task<ThreeMonthsData> LoadLast3MonthsExpenses();
-        Task<ThreeMonthsData> LoadLast3MonthsEarnings();
+        Task<ICollection<YearlyItem>> LoadCurrentYearVydaje();
+        Task<ICollection<YearlyItem>> LoadCurrentYearVydelky();
+        Task<ThreeMonthsData> LoadLast3MonthsVydaje();
+        Task<ThreeMonthsData> LoadLast3MonthsVydelky();
     }
 
 }

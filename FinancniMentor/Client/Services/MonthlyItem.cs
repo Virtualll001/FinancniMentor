@@ -2,7 +2,7 @@
 {
     public class MonthlyItem
     {
-        public decimal Amount { get; set; }
-        public string Category { get; set; }
+        public decimal Castka { get; set; }
+        public string Kategorie { get; set; }
     }
 }
