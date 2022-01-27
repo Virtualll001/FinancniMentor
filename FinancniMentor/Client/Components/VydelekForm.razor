@@ -1,0 +1,53 @@
+﻿@inject HttpClient Http;
+
+<div class="card mt-5">
+    <div class="card-header">
+        <h5>Přidat výdělek</h5>
+    </div>
+    <div class="card-body">
+        <EditForm Model="@vydelek" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+            <div class="form-group">
+                <label for="datumInput">Datum</label>
+                <InputDate class="form-control" id="datumInput" @bind-Value="vydelek.Datum" />
+            </div>
+            <div class="form-group">
+                <label for="subjektInput">Subjekt</label>
+                <InputText class="form-control" id="subjektInput" @bind-Value="vydelek.Subjekt" />
+            </div>
+            <div class="form-group">
+                <label for="kategorieInput">Kategorie</label>
+                <InputSelect class="form-control" id="kategorieInput" @bind-Value="vydelek.Kategorie">
+                    @{
+                        foreach (var value in Enum.GetValues(typeof(VydelekKategorie)))
+                        {
+                            <option value="@value">@value</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label for="castkaInput">Částka</label>
+                <InputNumber class="form-control" id="castkaInput" @bind-Value="vydelek.Castka" />
+            </div>
+           
+            <div class="pt-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>          
+        </EditForm>   
+    </div>
+</div>
+@code {
+
+    private VydelekModel vydelek = new VydelekModel { Datum = DateTime.Today };
+
+    [Parameter]
+    public EventCallback OnSubmitCallback { get; set; }
+
+    public async Task HandleValidSubmit()
+    {
+        await Http.PostAsJsonAsync<VydelekModel>("api/Vydelky", vydelek);
+        await OnSubmitCallback.InvokeAsync();
+    }
+}
