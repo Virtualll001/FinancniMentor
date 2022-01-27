@@ -1,8 +1,97 @@
 ﻿@page "/"
+@using System.Globalization
+@inject IDataService _dataService;
 
 <PageTitle>Finanční mentor</PageTitle>
 
 <h1>FINANČNÍ MENTOR&nbsp;💸</h1>
-<p> Cvičný projekt Blazor - WebAssembly</p>
+<p>
+    Blazor - WebAssembly: <a href="https://www.youtube.com/watch?v=89Klc6WHElw&list=PLwISgxnkpZGL_LhTQCWwp-WCzupv7lcp0&index=3" target="_blank">Claudio Bernasconi</a> <br />
+</p>
+<br />
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                @currentYear - Příjmy a výdaje
+            </div>
+            <div class="card-body">
+                <RadzenChart>
+                    <RadzenColumnSeries Fill="#AACDBE" Data="@yearlyEarnings" CategoryProperty="měsíc" ValueProperty="částka" Title="příjmy" LineType="LineType.Dashed" />
+                    <RadzenColumnSeries Fill="#EA907A" Data="@yearlyExpenses" CategoryProperty="měsíc" ValueProperty="částka" Title="výdaje" LineType="LineType.Dashed" />
+                    <RadzenColumnOptions Radius="5" />
+                    <RadzenValueAxis Formatter="@FormatAsCZK">
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Částka v korunách" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+            </div>
+        </div>
+    </div>
+</div>
 
-Zdroj: <a href="https://www.youtube.com/watch?v=89Klc6WHElw&list=PLwISgxnkpZGL_LhTQCWwp-WCzupv7lcp0&index=3" target="_blank">Claudio Bernasconi</a> 
+@if (vydelky != null)
+{
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    Příjmy - poslední 3 měsíce
+                </div>
+                <div class="card-body">
+                    <div style="display: flex">
+                        <PieChart Colors="@colors" Data="@vydelky.CurrentMonth" />
+                        <PieChart Colors="@colors" Data="@vydelky.LastMonth" />
+                        <PieChart Colors="@colors" Data="@vydelky.PreviousMonth" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (vydaje != null)
+{
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    Výdaje - poslední 3 měsíce
+                </div>
+                <div class="card-body">
+                    <div style="display: flex">
+                        <PieChart Colors="@colors" Data="@vydaje.CurrentMonth" />
+                        <PieChart Colors="@colors" Data="@vydaje.LastMonth" />
+                        <PieChart Colors="@colors" Data="@vydaje.PreviousMonth" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private static int currentYear = DateTime.Today.Year;
+    private ICollection<string> colors = new List<string>() { "#FBC687", "#F4F7C5", "#93ABD3" };
+    private ICollection<YearlyItem> yearlyExpenses;
+    private ICollection<YearlyItem> yearlyEarnings;
+    private ThreeMonthsData vydelky;
+    private ThreeMonthsData vydaje;
+
+    protected override async Task OnInitializedAsync()
+    {
+        vydelky = await _dataService.LoadLast3MonthsEarnings();
+        vydaje = await _dataService.LoadLast3MonthsExpenses();
+        yearlyExpenses = await _dataService.LoadCurrentYearExpenses();
+        yearlyEarnings = await _dataService.LoadCurrentYearEarnings();
+
+        StateHasChanged();
+    }
+
+    string FormatAsCZK(object value)
+    {
+        return ((double)value).ToString("C", CultureInfo.CreateSpecificCulture("cs-CZ"));
+    }
+}
+
+

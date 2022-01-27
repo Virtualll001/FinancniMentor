@@ -1,3 +1,4 @@
+using FinancniMentor.Client.Services;
 using FinancniMentor.Server;
 using Microsoft.AspNetCore.ResponseCompression;
 
